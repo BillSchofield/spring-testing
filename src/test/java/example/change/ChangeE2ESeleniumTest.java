@@ -1,6 +1,7 @@
 package example.change;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,8 +14,13 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.util.Arrays;
+
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ChangeE2ESeleniumTest {
@@ -83,12 +89,37 @@ public class ChangeE2ESeleniumTest {
         verifyCoins(actualCoins, "1 quarters");
     }
 
+    @Test
+    public void shouldHaveTwoQuarterWhenChangeIsFiftyCents() {
+        int changeInCents = 50;
+        var actualCoins = findCoinsFor(changeInCents);
 
+        verifyCoins(actualCoins, "2 quarters");
+    }
 
+    @Test
+    public void shouldHaveNoOtherCoinsThanQuartersWhenChangeIsTwentyFiveCents() {
+        int changeInCents = 25;
+        var actualCoins = findCoinsFor(changeInCents);
+
+        verifyCoins(actualCoins, "0 dimes", "0 nickels", "0 pennies");
+    }
 
 
     private static void verifyCoins(WebElement actualCoins, String expectedCoins) {
         assertThat(actualCoins.getText(), containsString(expectedCoins));
+    }
+
+    private static void verifyCoins(WebElement actualCoins, String ...expectedCoins) {
+        stream(expectedCoins).forEach(expectedCoin ->
+                assertThat(actualCoins.getText(), containsString(expectedCoin))
+        );
+    }
+
+    private static void verifyNoCoins(WebElement actualCoins, String... expectedCoins) {
+        stream(expectedCoins).forEach(expectedCoin ->
+                assertThat(actualCoins.getText(), not(containsString(expectedCoin)))
+        );
     }
 
     private WebElement findCoinsFor(int changeInCents) {

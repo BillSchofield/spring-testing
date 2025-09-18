@@ -32,7 +32,12 @@ public class ExampleController {
     }
 
     @GetMapping("/change/")
-    public String change(@RequestParam final int cents) {
+    public String change(@RequestParam int cents) {
+        int numberOfQuarters = 0;
+        while (cents >= 25) {
+            numberOfQuarters++;
+            cents -=25;
+        }
         int numberOfPennies = cents;
         int numberOfNickels = 0;
         if (cents >= 5) {
@@ -41,10 +46,6 @@ public class ExampleController {
         int numberOfDimes = 0;
         if (cents >= 10) {
             numberOfDimes = 1;
-        }
-        int numberOfQuarters = 0;
-        if (cents >= 25) {
-            numberOfQuarters = 1;
         }
         return numberOfQuarters + " quarters, " + numberOfDimes + " dimes, " + numberOfNickels + " nickels, " + numberOfPennies + " pennies";
     }
