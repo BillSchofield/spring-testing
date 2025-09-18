@@ -2,8 +2,6 @@ package example;
 
 import example.person.Person;
 import example.person.PersonRepository;
-import example.weather.WeatherResponse;
-import example.weather.WeatherClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,9 +24,6 @@ public class ExampleControllerAPITest {
     @MockBean
     private PersonRepository personRepository;
 
-    @MockBean
-    private WeatherClient weatherClient;
-
     @Test
     public void shouldReturnHelloWorld() throws Exception {
         mockMvc.perform(get("/hello"))
@@ -44,15 +39,5 @@ public class ExampleControllerAPITest {
         mockMvc.perform(get("/hello/Pan"))
                 .andExpect(content().string("Hello Peter Pan!"))
                 .andExpect(status().is2xxSuccessful());
-    }
-
-    @Test
-    public void shouldReturnCurrentWeather() throws Exception {
-        var weatherResponse = new WeatherResponse("raining", "a light drizzle");
-        given(weatherClient.fetchWeather()).willReturn(Optional.of(weatherResponse));
-
-        mockMvc.perform(get("/weather"))
-                .andExpect(status().is2xxSuccessful())
-                .andExpect(content().string("raining: a light drizzle"));
     }
 }

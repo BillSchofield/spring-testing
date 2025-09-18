@@ -8,7 +8,6 @@ import au.com.dius.pact.provider.spring.junit5.MockMvcTestTarget;
 import au.com.dius.pact.provider.spring.junit5.PactVerificationSpringProvider;
 import example.person.Person;
 import example.person.PersonRepository;
-import example.weather.WeatherClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,9 +33,6 @@ public class ExampleProviderTest {
     @Mock
     private PersonRepository personRepository;
 
-    @Mock
-    private WeatherClient weatherClient;
-
     private ExampleController exampleController;
 
     @TestTemplate
@@ -49,7 +45,7 @@ public class ExampleProviderTest {
     public void before(PactVerificationContext context) {
         MockitoAnnotations.openMocks(this);
         MockMvcTestTarget target = new MockMvcTestTarget();
-        exampleController = new ExampleController(personRepository, weatherClient);
+        exampleController = new ExampleController(personRepository);
         target.setControllers(exampleController);
         context.setTarget(target);
     }

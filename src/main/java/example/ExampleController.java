@@ -1,23 +1,20 @@
 package example;
 
 import example.person.PersonRepository;
-import example.weather.WeatherClient;
-import example.weather.WeatherResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ExampleController {
 
     private final PersonRepository personRepository;
-    private final WeatherClient weatherClient;
 
     @Autowired
-    public ExampleController(final PersonRepository personRepository, final WeatherClient weatherClient) {
+    public ExampleController(final PersonRepository personRepository) {
         this.personRepository = personRepository;
-        this.weatherClient = weatherClient;
     }
 
     @GetMapping("/hello")
@@ -34,10 +31,21 @@ public class ExampleController {
                 .orElse(String.format("Who is this '%s' you're talking about?", lastName));
     }
 
-    @GetMapping("/weather")
-    public String weather() {
-        return weatherClient.fetchWeather()
-                .map(WeatherResponse::getSummary)
-                .orElse("Sorry, I couldn't fetch the weather for you :(");
+    @GetMapping("/change/")
+    public String change(@RequestParam final int cents) {
+        int numberOfPennies = cents;
+        int numberOfNickels = 0;
+        if (cents >= 5) {
+            numberOfNickels = 1;
+        }
+        int numberOfDimes = 0;
+        if (cents >= 10) {
+            numberOfDimes = 1;
+        }
+        int numberOfQuarters = 0;
+        if (cents >= 25) {
+            numberOfQuarters = 1;
+        }
+        return numberOfQuarters + " quarters, " + numberOfDimes + " dimes, " + numberOfNickels + " nickels, " + numberOfPennies + " pennies";
     }
 }
